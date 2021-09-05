@@ -5,19 +5,24 @@ import PackageDescription
 
 let package = Package(
     name: "DPNetwork",
+    platforms: [
+        .iOS(.v11),
+    ],
     products: [
         .library(
             name: "DPNetwork",
-            targets: ["DPNetwork"]),
+            targets: ["DPNetwork"]
+        ),
     ],
-    dependencies: [
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "DPNetwork",
-            dependencies: []),
+            dependencies: []
+        ),
         .testTarget(
             name: "DPNetworkTests",
-            dependencies: ["DPNetwork"]),
+            dependencies: ["DPNetwork"]
+        ),
     ]
 )
