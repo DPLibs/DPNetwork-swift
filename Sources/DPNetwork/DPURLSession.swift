@@ -32,11 +32,11 @@ open class DPURLSession: URLSession, DPURLSessionInterface {
     
     // MARK: - Init
     public init(
-        configuration: URLSessionConfiguration = .default,
-        delegate: URLSessionDelegate? = nil,
-        delegateQueue: OperationQueue? = nil,
-        successfulResponseStatusCodes: [ResponseStatusCode] = .defaultSuccessful,
-        isLoggingEnabled: Bool = true
+        configuration: URLSessionConfiguration,
+        delegate: URLSessionDelegate?,
+        delegateQueue: OperationQueue?,
+        successfulResponseStatusCodes: [ResponseStatusCode],
+        isLoggingEnabled: Bool
     ) {
         self.successfulResponseStatusCodes = successfulResponseStatusCodes
         self.isLoggingEnabled = isLoggingEnabled
