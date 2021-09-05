@@ -13,20 +13,18 @@
 		E23EF62226E2453D008E9621 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E23EF62026E2453D008E9621 /* Main.storyboard */; };
 		E23EF62426E24541008E9621 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E23EF62326E24541008E9621 /* Assets.xcassets */; };
 		E23EF62726E24541008E9621 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E23EF62526E24541008E9621 /* LaunchScreen.storyboard */; };
-		E23EF66D26E2464A008E9621 /* NetworkWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF65E26E2464A008E9621 /* NetworkWorker.swift */; };
-		E23EF66E26E2464A008E9621 /* RequestParametersProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF65F26E2464A008E9621 /* RequestParametersProtocol.swift */; };
-		E23EF66F26E2464A008E9621 /* ResponseStatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66026E2464A008E9621 /* ResponseStatusCode.swift */; };
-		E23EF67026E2464A008E9621 /* RequestSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66126E2464A008E9621 /* RequestSuccess.swift */; };
-		E23EF67126E2464A008E9621 /* ResponseMappingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66226E2464A008E9621 /* ResponseMappingProtocol.swift */; };
+		E23EF66D26E2464A008E9621 /* DPURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF65E26E2464A008E9621 /* DPURLSession.swift */; };
+		E23EF66E26E2464A008E9621 /* DPRequestParametersProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF65F26E2464A008E9621 /* DPRequestParametersProtocol.swift */; };
+		E23EF66F26E2464A008E9621 /* DPResponseStatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66026E2464A008E9621 /* DPResponseStatusCode.swift */; };
+		E23EF67126E2464A008E9621 /* DPResponseMappingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66226E2464A008E9621 /* DPResponseMappingProtocol.swift */; };
 		E23EF67226E2464A008E9621 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66426E2464A008E9621 /* String+Extensions.swift */; };
 		E23EF67326E2464A008E9621 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66526E2464A008E9621 /* Data+Extensions.swift */; };
-		E23EF67426E2464A008E9621 /* URLRequest+RequestHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66626E2464A008E9621 /* URLRequest+RequestHeader.swift */; };
-		E23EF67526E2464A008E9621 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66726E2464A008E9621 /* Request.swift */; };
-		E23EF67626E2464A008E9621 /* RequestMappingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66826E2464A008E9621 /* RequestMappingModel.swift */; };
+		E23EF67526E2464A008E9621 /* DPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66726E2464A008E9621 /* DPRequest.swift */; };
 		E23EF67726E2464A008E9621 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66926E2464A008E9621 /* Dictionary.swift */; };
 		E23EF67826E2464A008E9621 /* Boundary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66A26E2464A008E9621 /* Boundary.swift */; };
-		E23EF67926E2464A008E9621 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66B26E2464A008E9621 /* NetworkError.swift */; };
-		E23EF67A26E2464A008E9621 /* RequestMappingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66C26E2464A008E9621 /* RequestMappingModels.swift */; };
+		E23EF67926E2464A008E9621 /* DPNetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66B26E2464A008E9621 /* DPNetworkError.swift */; };
+		E23EF67D26E51ED2008E9621 /* URLRequest+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF67C26E51ED2008E9621 /* URLRequest+Extensions.swift */; };
+		E2EAE27A26E538F6001B3007 /* DPRequestWithMappingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EAE27926E538F6001B3007 /* DPRequestWithMappingResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,20 +36,18 @@
 		E23EF62326E24541008E9621 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E23EF62626E24541008E9621 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E23EF62826E24541008E9621 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E23EF65E26E2464A008E9621 /* NetworkWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkWorker.swift; sourceTree = "<group>"; };
-		E23EF65F26E2464A008E9621 /* RequestParametersProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestParametersProtocol.swift; sourceTree = "<group>"; };
-		E23EF66026E2464A008E9621 /* ResponseStatusCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseStatusCode.swift; sourceTree = "<group>"; };
-		E23EF66126E2464A008E9621 /* RequestSuccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestSuccess.swift; sourceTree = "<group>"; };
-		E23EF66226E2464A008E9621 /* ResponseMappingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseMappingProtocol.swift; sourceTree = "<group>"; };
+		E23EF65E26E2464A008E9621 /* DPURLSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPURLSession.swift; sourceTree = "<group>"; };
+		E23EF65F26E2464A008E9621 /* DPRequestParametersProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPRequestParametersProtocol.swift; sourceTree = "<group>"; };
+		E23EF66026E2464A008E9621 /* DPResponseStatusCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPResponseStatusCode.swift; sourceTree = "<group>"; };
+		E23EF66226E2464A008E9621 /* DPResponseMappingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPResponseMappingProtocol.swift; sourceTree = "<group>"; };
 		E23EF66426E2464A008E9621 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		E23EF66526E2464A008E9621 /* Data+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
-		E23EF66626E2464A008E9621 /* URLRequest+RequestHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLRequest+RequestHeader.swift"; sourceTree = "<group>"; };
-		E23EF66726E2464A008E9621 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
-		E23EF66826E2464A008E9621 /* RequestMappingModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestMappingModel.swift; sourceTree = "<group>"; };
+		E23EF66726E2464A008E9621 /* DPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPRequest.swift; sourceTree = "<group>"; };
 		E23EF66926E2464A008E9621 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		E23EF66A26E2464A008E9621 /* Boundary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Boundary.swift; sourceTree = "<group>"; };
-		E23EF66B26E2464A008E9621 /* NetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
-		E23EF66C26E2464A008E9621 /* RequestMappingModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestMappingModels.swift; sourceTree = "<group>"; };
+		E23EF66B26E2464A008E9621 /* DPNetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPNetworkError.swift; sourceTree = "<group>"; };
+		E23EF67C26E51ED2008E9621 /* URLRequest+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Extensions.swift"; sourceTree = "<group>"; };
+		E2EAE27926E538F6001B3007 /* DPRequestWithMappingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPRequestWithMappingResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,15 +97,13 @@
 			children = (
 				E23EF66A26E2464A008E9621 /* Boundary.swift */,
 				E23EF66926E2464A008E9621 /* Dictionary.swift */,
-				E23EF66B26E2464A008E9621 /* NetworkError.swift */,
-				E23EF65E26E2464A008E9621 /* NetworkWorker.swift */,
-				E23EF66726E2464A008E9621 /* Request.swift */,
-				E23EF66826E2464A008E9621 /* RequestMappingModel.swift */,
-				E23EF66C26E2464A008E9621 /* RequestMappingModels.swift */,
-				E23EF65F26E2464A008E9621 /* RequestParametersProtocol.swift */,
-				E23EF66126E2464A008E9621 /* RequestSuccess.swift */,
-				E23EF66226E2464A008E9621 /* ResponseMappingProtocol.swift */,
-				E23EF66026E2464A008E9621 /* ResponseStatusCode.swift */,
+				E23EF66B26E2464A008E9621 /* DPNetworkError.swift */,
+				E23EF66726E2464A008E9621 /* DPRequest.swift */,
+				E23EF65F26E2464A008E9621 /* DPRequestParametersProtocol.swift */,
+				E2EAE27926E538F6001B3007 /* DPRequestWithMappingResponse.swift */,
+				E23EF66226E2464A008E9621 /* DPResponseMappingProtocol.swift */,
+				E23EF66026E2464A008E9621 /* DPResponseStatusCode.swift */,
+				E23EF65E26E2464A008E9621 /* DPURLSession.swift */,
 				E23EF66326E2464A008E9621 /* Extensions */,
 			);
 			name = DPNetwork;
@@ -121,7 +115,7 @@
 			children = (
 				E23EF66426E2464A008E9621 /* String+Extensions.swift */,
 				E23EF66526E2464A008E9621 /* Data+Extensions.swift */,
-				E23EF66626E2464A008E9621 /* URLRequest+RequestHeader.swift */,
+				E23EF67C26E51ED2008E9621 /* URLRequest+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -196,20 +190,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E23EF67426E2464A008E9621 /* URLRequest+RequestHeader.swift in Sources */,
-				E23EF67926E2464A008E9621 /* NetworkError.swift in Sources */,
-				E23EF67526E2464A008E9621 /* Request.swift in Sources */,
+				E23EF67926E2464A008E9621 /* DPNetworkError.swift in Sources */,
+				E23EF67526E2464A008E9621 /* DPRequest.swift in Sources */,
 				E23EF61F26E2453D008E9621 /* ViewController.swift in Sources */,
-				E23EF67A26E2464A008E9621 /* RequestMappingModels.swift in Sources */,
 				E23EF61B26E2453D008E9621 /* AppDelegate.swift in Sources */,
 				E23EF67826E2464A008E9621 /* Boundary.swift in Sources */,
-				E23EF67626E2464A008E9621 /* RequestMappingModel.swift in Sources */,
-				E23EF66D26E2464A008E9621 /* NetworkWorker.swift in Sources */,
-				E23EF67026E2464A008E9621 /* RequestSuccess.swift in Sources */,
+				E2EAE27A26E538F6001B3007 /* DPRequestWithMappingResponse.swift in Sources */,
+				E23EF66D26E2464A008E9621 /* DPURLSession.swift in Sources */,
 				E23EF67226E2464A008E9621 /* String+Extensions.swift in Sources */,
-				E23EF66F26E2464A008E9621 /* ResponseStatusCode.swift in Sources */,
-				E23EF67126E2464A008E9621 /* ResponseMappingProtocol.swift in Sources */,
-				E23EF66E26E2464A008E9621 /* RequestParametersProtocol.swift in Sources */,
+				E23EF67D26E51ED2008E9621 /* URLRequest+Extensions.swift in Sources */,
+				E23EF66F26E2464A008E9621 /* DPResponseStatusCode.swift in Sources */,
+				E23EF67126E2464A008E9621 /* DPResponseMappingProtocol.swift in Sources */,
+				E23EF66E26E2464A008E9621 /* DPRequestParametersProtocol.swift in Sources */,
 				E23EF67726E2464A008E9621 /* Dictionary.swift in Sources */,
 				E23EF61D26E2453D008E9621 /* SceneDelegate.swift in Sources */,
 				E23EF67326E2464A008E9621 /* Data+Extensions.swift in Sources */,

@@ -35,5 +35,13 @@ public extension Data {
             self.append(data)
         })
     }
+    
+    func toString(encoding: String.Encoding) -> String? {
+        String(data: self, encoding: encoding)
+    }
+    
+    func decodeToCodable<T: Codable>(_ codable: T.Type) throws -> T {
+        try JSONDecoder().decode(codable, from: self)
+    }
 
 }
