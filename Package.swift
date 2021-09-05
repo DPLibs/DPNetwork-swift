@@ -11,15 +11,18 @@ let package = Package(
     products: [
         .library(
             name: "DPNetwork",
-            targets: ["DPNetwork"]),
+            targets: ["DPNetwork"]
+        ),
     ],
     dependencies: [],
     targets: [
         .target(
             name: "DPNetwork",
-            dependencies: []),
+            dependencies: []
+        ),
         .testTarget(
             name: "DPNetworkTests",
-            dependencies: ["DPNetwork"]),
+            dependencies: ["DPNetwork"]
+        ),
     ]
 )
