@@ -3,7 +3,14 @@ import Foundation
 open class DPRequest: NSObject {
     
     // MARK: - Props
-    open lazy var session: DPURLSessionInterface = DPURLSession()
+    open lazy var session: DPURLSessionInterface = DPURLSession(
+        configuration: .default,
+        delegate: nil,
+        delegateQueue: nil,
+        successfulResponseStatusCodes: .defaultSuccessful,
+        isLoggingEnabled: true
+    )
+    
     open private(set) var isLoading: Bool = false
     
     // MARK: - Init
