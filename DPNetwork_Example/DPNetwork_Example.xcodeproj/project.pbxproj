@@ -15,7 +15,6 @@
 		E23EF62726E24541008E9621 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E23EF62526E24541008E9621 /* LaunchScreen.storyboard */; };
 		E23EF66D26E2464A008E9621 /* DPURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF65E26E2464A008E9621 /* DPURLSession.swift */; };
 		E23EF66E26E2464A008E9621 /* DPRequestParametersProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF65F26E2464A008E9621 /* DPRequestParametersProtocol.swift */; };
-		E23EF66F26E2464A008E9621 /* DPResponseStatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66026E2464A008E9621 /* DPResponseStatusCode.swift */; };
 		E23EF67126E2464A008E9621 /* DPResponseMappingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66226E2464A008E9621 /* DPResponseMappingProtocol.swift */; };
 		E23EF67226E2464A008E9621 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66426E2464A008E9621 /* String+Extensions.swift */; };
 		E23EF67326E2464A008E9621 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EF66526E2464A008E9621 /* Data+Extensions.swift */; };
@@ -38,7 +37,6 @@
 		E23EF62826E24541008E9621 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E23EF65E26E2464A008E9621 /* DPURLSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPURLSession.swift; sourceTree = "<group>"; };
 		E23EF65F26E2464A008E9621 /* DPRequestParametersProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPRequestParametersProtocol.swift; sourceTree = "<group>"; };
-		E23EF66026E2464A008E9621 /* DPResponseStatusCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPResponseStatusCode.swift; sourceTree = "<group>"; };
 		E23EF66226E2464A008E9621 /* DPResponseMappingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPResponseMappingProtocol.swift; sourceTree = "<group>"; };
 		E23EF66426E2464A008E9621 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		E23EF66526E2464A008E9621 /* Data+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
@@ -102,7 +100,6 @@
 				E23EF65F26E2464A008E9621 /* DPRequestParametersProtocol.swift */,
 				E2EAE27926E538F6001B3007 /* DPRequestWithMappingResponse.swift */,
 				E23EF66226E2464A008E9621 /* DPResponseMappingProtocol.swift */,
-				E23EF66026E2464A008E9621 /* DPResponseStatusCode.swift */,
 				E23EF65E26E2464A008E9621 /* DPURLSession.swift */,
 				E23EF66326E2464A008E9621 /* Extensions */,
 			);
@@ -199,7 +196,6 @@
 				E23EF66D26E2464A008E9621 /* DPURLSession.swift in Sources */,
 				E23EF67226E2464A008E9621 /* String+Extensions.swift in Sources */,
 				E23EF67D26E51ED2008E9621 /* URLRequest+Extensions.swift in Sources */,
-				E23EF66F26E2464A008E9621 /* DPResponseStatusCode.swift in Sources */,
 				E23EF67126E2464A008E9621 /* DPResponseMappingProtocol.swift in Sources */,
 				E23EF66E26E2464A008E9621 /* DPRequestParametersProtocol.swift in Sources */,
 				E23EF67726E2464A008E9621 /* Dictionary.swift in Sources */,

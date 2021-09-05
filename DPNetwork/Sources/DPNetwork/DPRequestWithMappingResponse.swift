@@ -9,19 +9,13 @@ open class DPRequestWithMappingResponse<Response: DPResponseMappingProtocol>: DP
     open func loadModel(
         urlRequest: URLRequest?,
         forceReload: Bool,
-        completion: ((Result<Response.ModelType, Error>) -> Void)?
+        completion: ((Result<Response.ModelType?, Error>) -> Void)?
     ) {
         self.load(urlRequest, forceReload: forceReload, decodeTo: Response.self) { loadResult in
-            var result: Result<Response.ModelType, Error> {
+            var result: Result<Response.ModelType?, Error> {
                 switch loadResult {
                 case let .success(response):
-                    do {
-                        let model = try response.mapToModel()
-                        
-                        return .success(model)
-                    } catch {
-                        return .failure(error)
-                    }
+                    return .success(response.mapToModel())
                 case let .failure(error):
                     return .failure(error)
                 }
@@ -47,19 +41,7 @@ open class DPRequestWithMappingResponse<Response: DPResponseMappingProtocol>: DP
             var result: Result<[Response.ModelType], Error> {
                 switch loadResult {
                 case let .success(responses):
-                    do {
-                        let models = try responses.map({ response in
-                            try response.mapToModel()
-                        })
-                        
-                        if let limit = limit {
-                            self.modelsIsLoadingAll = models.count < limit
-                        }
-                        
-                        return .success(models)
-                    } catch {
-                        return .failure(error)
-                    }
+                    return .success(responses.mapToModels())
                 case let .failure(error):
                     return .failure(error)
                 }
