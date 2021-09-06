@@ -4,11 +4,11 @@ public protocol DPURLSessionInterface: AnyObject {
     var isLoggingEnabled: Bool { get set }
     
     func cancelDataTask()
-    func loadURLRequest(_ urlRequest: URLRequest?, completion: DPURLSession.LoadCompletion<Data>?)
-    func loadURLRequest<T: Codable>(_ urlRequest: URLRequest?, decodeTo codableType: T.Type, completion: DPURLSession.LoadCompletion<T>?)
+    func loadURLRequest(_ urlRequest: URLRequest?, completion: DPNetworkWorker.LoadCompletion<Data>?)
+    func loadURLRequest<T: Codable>(_ urlRequest: URLRequest?, decodeTo codableType: T.Type, completion: DPNetworkWorker.LoadCompletion<T>?)
 }
 
-open class DPURLSession: URLSession, DPURLSessionInterface {
+open class DPNetworkWorker: NSObject, DPURLSessionInterface {
     
     // MARK: - Static
     public typealias LoadCompletion<DataType> = (DataType?, HTTPURLResponse?, Error?) -> Void
@@ -25,23 +25,24 @@ open class DPURLSession: URLSession, DPURLSessionInterface {
     }
     
     // MARK: - Props
+    public let session: URLSession
     public let successfulResponseStatusCodes: [ResponseStatusCode]
     
-    open var isLoggingEnabled: Bool
+    open var isLoggingEnabled: Bool = true
     open var dataTask: URLSessionDataTask?
     
     // MARK: - Init
     public init(
-        configuration: URLSessionConfiguration,
-        delegate: URLSessionDelegate?,
-        delegateQueue: OperationQueue?,
+        session: URLSession,
         successfulResponseStatusCodes: [ResponseStatusCode],
         isLoggingEnabled: Bool
+        
     ) {
+        self.session = session
         self.successfulResponseStatusCodes = successfulResponseStatusCodes
         self.isLoggingEnabled = isLoggingEnabled
         
-        super.init(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
+        super.init()
     }
     
     // MARK: - Methods
@@ -52,10 +53,11 @@ open class DPURLSession: URLSession, DPURLSessionInterface {
     open func logging(_ items: Any...) {
         guard self.isLoggingEnabled else { return }
         
-        var printItems = items
-        printItems.insert("[RequestWorker] -", at: 0)
-        
-        print(printItems)
+        var itemsPrint: [String] = [
+            "[\(NSStringFromClass(Self.self).components(separatedBy: ".").last ?? "")] - "
+        ]
+        itemsPrint.append(contentsOf: items.map({ "\($0)" }))
+        print(itemsPrint.joined(separator: " "))
     }
     
     open func loadURLRequest(
@@ -100,7 +102,7 @@ open class DPURLSession: URLSession, DPURLSessionInterface {
         }
         
         self.dataTask?.cancel()
-        self.dataTask = self.dataTask(with: urlRequest, completionHandler: completionHandler)
+        self.dataTask = self.session.dataTask(with: urlRequest, completionHandler: completionHandler)
         self.dataTask?.resume()
     }
     
@@ -132,7 +134,7 @@ open class DPURLSession: URLSession, DPURLSessionInterface {
 }
 
 // MARK: - DPURLSession.StatusCode + Store
-public extension DPURLSession.ResponseStatusCode {
+public extension DPNetworkWorker.ResponseStatusCode {
     
     static var defaultSuccessful: [Self] {
         [
@@ -144,7 +146,7 @@ public extension DPURLSession.ResponseStatusCode {
 }
 
 // MARK: - DPURLSession.StatusCode + Array
-public extension Array where Element == DPURLSession.ResponseStatusCode {
+public extension Array where Element == DPNetworkWorker.ResponseStatusCode {
     
     static var defaultSuccessful: Self {
         Element.defaultSuccessful
