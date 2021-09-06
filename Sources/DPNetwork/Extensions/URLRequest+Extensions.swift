@@ -59,6 +59,11 @@ public extension URLRequest {
                     request.httpBody = httpBody
                     request.setRequestHeaders([.init(key: .contentType, value: .applicationFormData(with: boundary))])
                 }
+            case .formUrlencoded:
+                if let string = parameters?.toQueryString(), let httpBody = string.data(using: .utf8) {
+                    request.httpBody = httpBody
+                    request.setRequestHeaders([.init(key: .contentType, value: .applicationFormUrlencoded)])
+                }
             }
             
             return request

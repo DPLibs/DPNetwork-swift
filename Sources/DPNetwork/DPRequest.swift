@@ -3,10 +3,8 @@ import Foundation
 open class DPRequest: NSObject {
     
     // MARK: - Props
-    open lazy var session: DPURLSessionInterface = DPURLSession(
-        configuration: .default,
-        delegate: nil,
-        delegateQueue: nil,
+    open lazy var session: DPURLSessionInterface = DPNetworkWorker(
+        session: .init(configuration: .default),
         successfulResponseStatusCodes: .defaultSuccessful,
         isLoggingEnabled: true
     )
@@ -123,6 +121,7 @@ public extension DPRequest {
         case none
         case json
         case formData
+        case formUrlencoded
     }
     
     // MARK: - URLPath
@@ -229,7 +228,7 @@ public extension DPRequest {
 // MARK: - Request.Header.Key + Store
 public extension DPRequest.Header.Key {
     
-    static var contentType: Self {
+    static var contentType: DPRequest.Header.Key {
         .init(stringValue: "Content-Type")
     }
     
@@ -238,15 +237,19 @@ public extension DPRequest.Header.Key {
 // MARK: - Request.Header.Value + Store
 public extension DPRequest.Header.Value {
     
-    static var applicationJson: Self {
+    static var applicationJson: DPRequest.Header.Value {
         .init(stringValue: "application/json")
     }
     
-    static func applicationFormData(with boundary: Boundary) -> Self {
+    static var applicationFormUrlencoded: DPRequest.Header.Value {
+        .init(stringValue: "application/x-www-form-urlencoded")
+    }
+    
+    static func applicationFormData(with boundary: Boundary) -> DPRequest.Header.Value {
         .init(stringValue: "application/form-data; boundary=\(boundary.stringValue)")
     }
     
-    static func multipartFormData(with boundary: Boundary) -> Self {
+    static func multipartFormData(with boundary: Boundary) -> DPRequest.Header.Value {
         .init(stringValue: "multipart/form-data; boundary=\(boundary.stringValue)")
     }
     
