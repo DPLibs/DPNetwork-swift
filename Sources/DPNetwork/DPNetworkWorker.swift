@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol DPURLSessionInterface: AnyObject {
+public protocol DPNetworkWorkerInterface: AnyObject {
     var isLoggingEnabled: Bool { get set }
     
     func cancelDataTask()
@@ -8,7 +8,7 @@ public protocol DPURLSessionInterface: AnyObject {
     func loadURLRequest<T: Codable>(_ urlRequest: URLRequest?, decodeTo codableType: T.Type, completion: DPNetworkWorker.LoadCompletion<T>?)
 }
 
-open class DPNetworkWorker: NSObject, DPURLSessionInterface {
+open class DPNetworkWorker: NSObject, DPNetworkWorkerInterface {
     
     // MARK: - Static
     public typealias LoadCompletion<DataType> = (DataType?, HTTPURLResponse?, Error?) -> Void
@@ -25,6 +25,7 @@ open class DPNetworkWorker: NSObject, DPURLSessionInterface {
     }
     
     // MARK: - Props
+    public let identifer: String
     public let session: URLSession
     public let successfulResponseStatusCodes: [ResponseStatusCode]
     
@@ -35,12 +36,14 @@ open class DPNetworkWorker: NSObject, DPURLSessionInterface {
     public init(
         session: URLSession,
         successfulResponseStatusCodes: [ResponseStatusCode],
-        isLoggingEnabled: Bool
+        isLoggingEnabled: Bool,
+        identifer: String = UUID().uuidString
         
     ) {
         self.session = session
         self.successfulResponseStatusCodes = successfulResponseStatusCodes
         self.isLoggingEnabled = isLoggingEnabled
+        self.identifer = identifer
         
         super.init()
     }
@@ -60,10 +63,7 @@ open class DPNetworkWorker: NSObject, DPURLSessionInterface {
         print(itemsPrint.joined(separator: " "))
     }
     
-    open func loadURLRequest(
-        _ urlRequest: URLRequest?,
-        completion: LoadCompletion<Data>?
-    ) {
+    open func loadURLRequest(_ urlRequest: URLRequest?, completion: LoadCompletion<Data>?) {
         guard let urlRequest = urlRequest else {
             completion?(nil, nil, DPNetworkError.invalidRequest)
             return
@@ -106,11 +106,7 @@ open class DPNetworkWorker: NSObject, DPURLSessionInterface {
         self.dataTask?.resume()
     }
     
-    open func loadURLRequest<T: Codable>(
-        _ urlRequest: URLRequest?,
-        decodeTo codableType: T.Type,
-        completion: LoadCompletion<T>?
-    ) {
+    open func loadURLRequest<T: Codable>(_ urlRequest: URLRequest?, decodeTo codableType: T.Type, completion: LoadCompletion<T>?) {
         self.loadURLRequest(urlRequest) { data, response, error in
             guard let data = data, error == nil else {
                 let networkError: DPNetworkError = .error(error) ?? .unknown

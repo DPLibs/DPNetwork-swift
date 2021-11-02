@@ -1,16 +1,17 @@
 import Foundation
 
 open class DPRequestWithMappingResponse<Response: DPResponseMappingProtocol>: DPRequest {
+    public typealias ModelResult = Result<Response.ModelType?, Error>
+    public typealias ModelsResult = Result<[Response.ModelType], Error>
+    
+    public typealias ModelClosure = (ModelResult) -> Void
+    public typealias ModelsClosure = (ModelsResult) -> Void
     
     // MARK: - Props
     public private(set) var modelsIsLoadingAll: Bool = false
     
     // MARK: - Methods
-    open func loadModel(
-        urlRequest: URLRequest?,
-        forceReload: Bool,
-        completion: ((Result<Response.ModelType?, Error>) -> Void)?
-    ) {
+    open func loadModel(urlRequest: URLRequest?, forceReload: Bool, completion: ModelClosure?) {
         self.load(urlRequest, forceReload: forceReload, decodeTo: Response.self) { loadResult in
             var result: Result<Response.ModelType?, Error> {
                 switch loadResult {
@@ -25,12 +26,7 @@ open class DPRequestWithMappingResponse<Response: DPResponseMappingProtocol>: DP
         }
     }
     
-    open func loadModels(
-        urlRequest: URLRequest?,
-        forceReload: Bool,
-        limit: Int?,
-        completion: ((Result<[Response.ModelType], Error>) -> Void)?
-    ) {
+    open func loadModels(urlRequest: URLRequest?, forceReload: Bool, limit: Int?, completion: ModelsClosure?) {
         if forceReload {
             self.modelsIsLoadingAll = false
         }
@@ -41,7 +37,13 @@ open class DPRequestWithMappingResponse<Response: DPResponseMappingProtocol>: DP
             var result: Result<[Response.ModelType], Error> {
                 switch loadResult {
                 case let .success(responses):
-                    return .success(responses.mapToModels())
+                    let models = responses.mapToModels()
+                    
+                    if let limit = limit {
+                        self.modelsIsLoadingAll = models.count < limit
+                    }
+                    
+                    return .success(models)
                 case let .failure(error):
                     return .failure(error)
                 }

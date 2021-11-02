@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Boundary {
+public struct DPBoundary {
     
     // MARK: - Props
     public let stringValue: String

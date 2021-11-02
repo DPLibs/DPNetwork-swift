@@ -2,9 +2,9 @@ import Foundation
 
 public protocol DPRequestParametersProtocol: Codable {
     func toData() -> Data?
-    func toDictionary() -> Dictionary?
+    func toDictionary() -> [String: Any]?
     func toQueryString() -> String?
-    func toFormData(boundary: Boundary) -> Data?
+    func toFormData(boundary: DPBoundary) -> Data?
 }
 
 public extension DPRequestParametersProtocol {
@@ -21,11 +21,11 @@ public extension DPRequestParametersProtocol {
         }
     }
     
-    func toDictionary() -> Dictionary? {
+    func toDictionary() -> [String: Any]? {
         guard let data = self.toData() else { return nil }
 
         do {
-            let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? Dictionary
+            let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
             
             return dictionary
         } catch {
@@ -80,7 +80,7 @@ public extension DPRequestParametersProtocol {
         return resultArray.joined(separator: "&")
     }
     
-    func toFormData(boundary: Boundary) -> Data? {
+    func toFormData(boundary: DPBoundary) -> Data? {
         guard let dictionary = self.toDictionary(), !dictionary.isEmpty else { return nil }
         var result = Data()
         

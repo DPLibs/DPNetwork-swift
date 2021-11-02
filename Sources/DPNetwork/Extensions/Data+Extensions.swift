@@ -28,14 +28,6 @@ public extension Data {
         })
     }
     
-    mutating func appendDatas(_ datas: [Data?]) {
-        datas.forEach({
-            guard let data = $0 else { return }
-            
-            self.append(data)
-        })
-    }
-    
     func toString(encoding: String.Encoding) -> String? {
         String(data: self, encoding: encoding)
     }
