@@ -10,7 +10,7 @@ import Foundation
 open class DPURLRequestGenerator {
     
     // MARK: - Init
-    init(
+    public init(
         urlPath: URLPath,
         httpMethod: HTTPMethod,
         headers: [Header]? = nil,
