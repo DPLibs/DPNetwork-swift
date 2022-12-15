@@ -13,7 +13,8 @@
 		E257C634294B47D700BA9917 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E257C632294B47D700BA9917 /* LaunchScreen.storyboard */; };
 		E257C63F294B489500BA9917 /* DPNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = E257C63E294B489500BA9917 /* DPNetwork */; };
 		E257C642294B49F900BA9917 /* DPNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E257C641294B49F900BA9917 /* DPNetworkService.swift */; };
-		E257C644294B4A3F00BA9917 /* DPNetworkMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E257C643294B4A3F00BA9917 /* DPNetworkMapper.swift */; };
+		E257C644294B4A3F00BA9917 /* DPNetworkMapperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E257C643294B4A3F00BA9917 /* DPNetworkMapperFactory.swift */; };
+		E257C646294B667200BA9917 /* DPNetworkRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E257C645294B667200BA9917 /* DPNetworkRequestFactory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +26,8 @@
 		E257C635294B47D700BA9917 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E257C63C294B488800BA9917 /* DPNetwork-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "DPNetwork-swift"; path = ..; sourceTree = "<group>"; };
 		E257C641294B49F900BA9917 /* DPNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkService.swift; sourceTree = "<group>"; };
-		E257C643294B4A3F00BA9917 /* DPNetworkMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkMapper.swift; sourceTree = "<group>"; };
+		E257C643294B4A3F00BA9917 /* DPNetworkMapperFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkMapperFactory.swift; sourceTree = "<group>"; };
+		E257C645294B667200BA9917 /* DPNetworkRequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkRequestFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +92,8 @@
 			isa = PBXGroup;
 			children = (
 				E257C641294B49F900BA9917 /* DPNetworkService.swift */,
-				E257C643294B4A3F00BA9917 /* DPNetworkMapper.swift */,
+				E257C643294B4A3F00BA9917 /* DPNetworkMapperFactory.swift */,
+				E257C645294B667200BA9917 /* DPNetworkRequestFactory.swift */,
 			);
 			path = "New lib";
 			sourceTree = "<group>";
@@ -170,7 +173,8 @@
 			files = (
 				E257C62C294B47D500BA9917 /* ViewController.swift in Sources */,
 				E257C642294B49F900BA9917 /* DPNetworkService.swift in Sources */,
-				E257C644294B4A3F00BA9917 /* DPNetworkMapper.swift in Sources */,
+				E257C644294B4A3F00BA9917 /* DPNetworkMapperFactory.swift in Sources */,
+				E257C646294B667200BA9917 /* DPNetworkRequestFactory.swift in Sources */,
 				E257C628294B47D500BA9917 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
