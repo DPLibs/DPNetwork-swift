@@ -14,11 +14,15 @@ let package = Package(
             targets: ["DPNetwork"]
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/DPLibs/DPLogger-swift.git", from: "0.0.3")
+    ],
     targets: [
         .target(
             name: "DPNetwork",
-            dependencies: []
+            dependencies: [
+                .product(name: "DPLogger", package: "DPLogger-swift")
+            ]
         ),
         .testTarget(
             name: "DPNetworkTests",

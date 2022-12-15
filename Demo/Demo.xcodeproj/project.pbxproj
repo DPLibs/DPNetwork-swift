@@ -15,6 +15,7 @@
 		E257C642294B49F900BA9917 /* DPNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E257C641294B49F900BA9917 /* DPNetworkService.swift */; };
 		E257C644294B4A3F00BA9917 /* DPNetworkMapperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E257C643294B4A3F00BA9917 /* DPNetworkMapperFactory.swift */; };
 		E257C646294B667200BA9917 /* DPNetworkRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E257C645294B667200BA9917 /* DPNetworkRequestFactory.swift */; };
+		E2B7E8CD294BBC9000A30BDD /* DPNetworkHandlerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B7E8CC294BBC9000A30BDD /* DPNetworkHandlerFactory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		E257C641294B49F900BA9917 /* DPNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkService.swift; sourceTree = "<group>"; };
 		E257C643294B4A3F00BA9917 /* DPNetworkMapperFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkMapperFactory.swift; sourceTree = "<group>"; };
 		E257C645294B667200BA9917 /* DPNetworkRequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkRequestFactory.swift; sourceTree = "<group>"; };
+		E2B7E8CC294BBC9000A30BDD /* DPNetworkHandlerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPNetworkHandlerFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				E257C641294B49F900BA9917 /* DPNetworkService.swift */,
 				E257C643294B4A3F00BA9917 /* DPNetworkMapperFactory.swift */,
 				E257C645294B667200BA9917 /* DPNetworkRequestFactory.swift */,
+				E2B7E8CC294BBC9000A30BDD /* DPNetworkHandlerFactory.swift */,
 			);
 			path = "New lib";
 			sourceTree = "<group>";
@@ -171,6 +174,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2B7E8CD294BBC9000A30BDD /* DPNetworkHandlerFactory.swift in Sources */,
 				E257C62C294B47D500BA9917 /* ViewController.swift in Sources */,
 				E257C642294B49F900BA9917 /* DPNetworkService.swift in Sources */,
 				E257C644294B4A3F00BA9917 /* DPNetworkMapperFactory.swift in Sources */,

@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "DPLogger",
+        "repositoryURL": "https://github.com/DPLibs/DPLogger-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "a89b195fba25d6c5e6db23bfda4e2253c867fa28",
+          "version": "0.0.3"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

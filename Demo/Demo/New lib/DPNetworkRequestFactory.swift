@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol DPNetworkRequestFactory {
-    func generateURLRequest() throws -> URLRequest
+    func produceURLRequest() throws -> URLRequest
 }

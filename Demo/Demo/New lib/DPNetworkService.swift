@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import DPLogger
 
-open class DPNetworkService<Mapper: DPNetworkMapperFactory> {
+open class DPNetworkService: DPLoggable {
+    public var isDPLoggingEnabled: Bool = true
+    
     
     // MARK: - Init
     init() {
@@ -15,28 +18,29 @@ open class DPNetworkService<Mapper: DPNetworkMapperFactory> {
     }
     
     // MARK: - Props
-    public typealias ModelResult = Result<Mapper.Model?, Error>
-    public typealias ModelResultClosure = (ModelResult) -> Void
-    
     open var session: URLSession
     open var dataTask: URLSessionDataTask?
-    open var mapper: Mapper?
-    open var completion: ModelResultClosure?
+//    open var handler: Handler?
+//    open var mapper: Mapper?
     
     // MARK: - Methods
-    open func load(_ request: DPNetworkRequestFactory) {
+    open func load(_ request: DPNetworkRequestFactory, completion: (() -> Void)?) {
         do {
-            let urlRequest = try request.generateURLRequest()
+            let urlRequest = try request.produceURLRequest()
             
             let completionHandler: (Data?, URLResponse?, Error?) -> Void = { [weak self] data, response, error in
                 guard let self = self else { return }
                 
+                self.log(urlRequest: urlRequest, urlReponse: response, data: data, error: error)
+                
                 if let error = error {
-                    self.completion?(.failure(error))
+//                    completion?(.failure(error))
                 } else {
-                    if let response = response as? HTTPURLResponse {
-                        
-                    }
+//                    if let response = response as? HTTPURLResponse {
+//
+//                    }
+                    
+//                    self.handler?.prepareURLResponse(data: data, mapper: self.mapper)
                 }
                 
 //                guard let response = response as? HTTPURLResponse, error == nil else {
@@ -62,7 +66,7 @@ open class DPNetworkService<Mapper: DPNetworkMapperFactory> {
             self.dataTask = self.session.dataTask(with: urlRequest, completionHandler: completionHandler)
             self.dataTask?.resume()
         } catch {
-            self.completion?(.failure(error))
+//            completion?(.failure(error))
         }
     }
     
