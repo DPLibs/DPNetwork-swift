@@ -7,7 +7,6 @@
 
 import Foundation
 import DPLogger
-
 open class DPNetworkService: DPLoggable {
     public var isDPLoggingEnabled: Bool = true
     

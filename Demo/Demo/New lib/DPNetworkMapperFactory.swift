@@ -8,8 +8,8 @@
 import Foundation
 
 public protocol DPNetworkMapperFactory {
-    associatedtype Response: Decodable
-    associatedtype Model
+    associatedtype Input
+    associatedtype Output
     
-    func mapResponseToModel(_ response: Response) throws -> Model
+    func map(_ input: Input) throws -> Output
 }
