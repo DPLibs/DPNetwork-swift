@@ -7,9 +7,9 @@
 
 import Foundation
 
-public protocol DPNetworkMapperFactory {
-    associatedtype Input
-    associatedtype Output
-    
-    func map(_ input: Input) throws -> Output
-}
+//public protocol DPNetworkMapperFactory {
+//    associatedtype Input
+//    associatedtype Output
+//    
+//    func map(_ input: Input) throws -> Output
+//}
