@@ -7,14 +7,12 @@
 
 import Foundation
 
-public enum DPNResultEmpty {
-    case success
-    case failure(Error)
-}
+// TODO: - 1. Implement paging
+// TODO: - 2. URLRequest constructor
+// TODO: - 3. Tasks array (show Almofare)
+// TODO: - 4. Flags: isLoading, isLoadAll
 
-typealias DPNResult<Success> = Result<Success, Error>
-typealias DPNDataTaskCompletion = (data: Data?, urlResponse: URLResponse?, error: Error?)
-typealias DPNSerilizeResult = DPNResult<Data>
+public typealias DPNResult<Success> = Result<Success, Error>
 
 public struct DPNError: LocalizedError, Equatable {
     
@@ -44,6 +42,14 @@ public struct DPNError: LocalizedError, Equatable {
     
     // MARK: - Store
     public static let failtureMap = DPNError(id: "failtureMap", message: "Failture map")
+    public static let failtureURLRequest = DPNError(id: "failtureURLRequest", message: "Failture URLRequest")
+    public static let emptyData = DPNError(id: "emptyData", message: "Empty data")
+    public static let emptyURLResponse = DPNError(id: "emptyURLResponse", message: "Empty URLResponse")
+    
+    public static func failtureURLResponseStatusCode(_ statusCode: Int) -> DPNError {
+        DPNError(id: "failtureURLResponseStatusCode", message: "Failture URLResponse statusCode - \(statusCode)")
+    }
+    
 }
 
 public protocol DPNMapperFactory {
@@ -51,6 +57,47 @@ public protocol DPNMapperFactory {
     associatedtype Output
     
     func map(_ input: Input) throws -> Output
+}
+
+extension DPNMapperFactory {
+    
+    func mappingArray() -> DPNArrayMapper<Self> {
+        DPNArrayMapper<Self>(mapper: self)
+    }
+    
+}
+
+public struct DPNArrayMapper<Mapper: DPNMapperFactory>: DPNMapperFactory {
+    
+    // MARK: - Init
+    public init(mapper: Mapper) {
+        self.mapper = mapper
+    }
+    
+    // MARK: - Props
+    public let mapper: Mapper
+    
+    // MARK: - Methods
+    public func map(_ input: [Mapper.Input]) throws -> [Mapper.Output] {
+        var outputs: [Mapper.Output] = []
+        var mappingError: Error?
+        
+        for inputElement in input {
+            do {
+                let output = try self.mapper.map(inputElement)
+                outputs.append(output)
+            } catch {
+                mappingError = error
+                break
+            }
+        }
+        
+        if let error = mappingError {
+            throw error
+        } else {
+            return outputs
+        }
+    }
 }
 
 public protocol DPNURLRequestFactory {
@@ -62,56 +109,283 @@ public struct DPNURLRequest: DPNURLRequestFactory {
     public let url: URL?
     
     public func produce() throws -> URLRequest {
-        guard let url = self.url else { throw DPNError.failtureMap }
+        guard let url = self.url else { throw DPNError.failtureURLRequest }
         
         return URLRequest(url: url)
     }
     
 }
 
-public protocol DPNSerilizerFactory: AnyObject {
-    associatedtype Output
-    
-    func serilize(_ data: Data, completion: @escaping (Output) -> Void)
+public struct DPNEmptyMapper: DPNMapperFactory {
+    public func map(_ input: DPNEmptyResponse) throws -> Void {}
 }
 
+public struct DPNEmptyResponse: Decodable {}
+
+/// 3. Empty mapper
 open class DPNService: NSObject {
-    
-    func prepare() -> DPNService {
-        self
+
+    // MARK: - Init
+    public init(urlSession: URLSession = .shared, jsonDecoder: JSONDecoder = JSONDecoder()) {
+        self.urlSession = urlSession
+        self.jsonDecoder = jsonDecoder
     }
-    
-    func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper, completion: @escaping (DPNResult<Mapper.Output>) -> Void) {
-        
-    }
-    
-    func load(request: DPNURLRequestFactory, completion: @escaping (DPNResultEmpty) -> Void) {
-//        self.load(request: request) { [weak self] context in
-//            self?.seriliaze(context, completion: { [weak self] result in
-//                <#code#>
-//            })
-//        }
-    }
-    
-    func load(request: DPNURLRequestFactory, completion: @escaping (DPNResult<DPNDataTaskCompletion>) -> Void) {
+
+    // MARK: - Props
+    open var urlSession: URLSession
+    open var jsonDecoder: JSONDecoder
+    open var task: URLSessionTask?
+
+    // MARK: - Methods
+    open func loadData(request: DPNURLRequestFactory, completion: @escaping (DPNResult<Data?>) -> Void) {
         do {
             let urlRequest = try request.produce()
-            
-            let task = URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
-                let success = DPNDataTaskCompletion(data, urlResponse, error)
-                completion(.success(success))
+
+            self.task = self.urlSession.dataTask(with: urlRequest) { [weak self] data, urlResponse, error in
+                guard let self = self else { return }
+
+                do {
+                    try self.serilizeDataTaskCompletion(data: data, urlResponse: urlResponse, error: error)
+                    completion(.success(data))
+                } catch {
+                    completion(.failure(error))
+                }
             }
+            self.task?.resume()
         } catch {
             completion(.failure(error))
         }
     }
-    
-    func seriliaze(_ content: DPNDataTaskCompletion, completion: @escaping (DPNSerilizeResult) -> Void) {
-        if let error = content.error {
-            completion(.failure(error))
-        } else if let data = content.data {
-            completion(.success(data))
+
+    open func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper = DPNEmptyMapper(), completion: @escaping (DPNResult<Mapper.Output>) -> Void) where Mapper.Input: Decodable {
+        self.loadData(request: request) { [weak self] result in
+            guard let self = self else { return }
+
+            do {
+                switch result {
+                case let .failure(error):
+                    throw error
+                case let .success(data):
+                    let response: Mapper.Input = try self.decodeData(data)
+                    let success: Mapper.Output = try mapper.map(response)
+                    completion(.success(success))
+                }
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
-    
+
+    open func serilizeDataTaskCompletion(data: Data?, urlResponse: URLResponse?, error: Error?) throws {
+        if let error = error {
+            throw error
+        } else {
+            guard let httpURLResponse = urlResponse as? HTTPURLResponse else {
+                throw DPNError.emptyURLResponse
+            }
+
+            switch httpURLResponse.statusCode {
+            case 200..<300:
+                return
+            default:
+                throw DPNError.failtureURLResponseStatusCode(httpURLResponse.statusCode)
+            }
+        }
+    }
+
+    open func decodeData<Response: Decodable>(_ data: Data?) throws -> Response {
+        if let data = data {
+            return try self.jsonDecoder.decode(Response.self, from: data)
+        } else {
+            throw DPNError.emptyData
+        }
+    }
+
 }
+
+
+//public protocol DPNDecoderFactory {
+//    associatedtype Output
+//
+//    func decodeData(_ data: Data?) throws -> Output
+//}
+//
+//open class DPNEmptyDecoder: DPNDecoderFactory {
+//    open func decodeData(_ data: Data?) throws -> Void {}
+//}
+//
+//open class DPNDecoder<Mapper: DPNMapperFactory>: DPNDecoderFactory where Mapper.Input: Decodable {
+//
+//    // MARK: - Init
+//    public init(mapper: Mapper, jsonDecoder: JSONDecoder = JSONDecoder()) {
+//        self.mapper = mapper
+//        self.jsonDecoder = JSONDecoder()
+//    }
+//
+//    // MARK: - Props
+//    open var mapper: Mapper
+//    open var jsonDecoder: JSONDecoder
+//
+//    // MARK: - Methods
+//    open func decodeData(_ data: Data?) throws -> Mapper.Output {
+//        guard let data = data else {
+//            throw DPNError.emptyData
+//        }
+//
+//        do {
+//            let response = try self.jsonDecoder.decode(Mapper.Input.self, from: data)
+//            let output = try mapper.map(response)
+//            return output
+//        } catch {
+//            throw error
+//        }
+//    }
+//
+//}
+
+
+/// 1. Serilize in service. Two methods
+//open class DPNService: NSObject {
+//
+//    // MARK: - Init
+//    public override init() {
+//        self.urlSession = URLSession.shared
+//        self.jsonDecoder = JSONDecoder()
+//    }
+//
+//    // MARK: - Props
+//    open var urlSession: URLSession
+//    open var jsonDecoder: JSONDecoder
+//
+//    // MARK: - Methods
+//    open func load(request: DPNURLRequestFactory, completion: @escaping (DPNResult<Data?>) -> Void) {
+//        do {
+//            let urlRequest = try request.produce()
+//
+//            let task = self.urlSession.dataTask(with: urlRequest) { [weak self] data, urlResponse, error in
+//                guard let self = self else { return }
+//
+//                do {
+//                    try self.serilizeDataTaskCompletion(data: data, urlResponse: urlResponse, error: error)
+//                    completion(.success(data))
+//                } catch {
+//                    completion(.failure(error))
+//                }
+//            }
+//        } catch {
+//            completion(.failure(error))
+//        }
+//    }
+//
+//    open func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper, completion: @escaping (DPNResult<Mapper.Output>) -> Void) where Mapper.Input: Decodable {
+//        self.load(request: request) { [weak self] result in
+//            guard let self = self else { return }
+//
+//            do {
+//                switch result {
+//                case let .failure(error):
+//                    throw error
+//                case let .success(data):
+//                    let response: Mapper.Input = try self.decodeData(data)
+//                    let output: Mapper.Output = try mapper.map(response)
+//                    completion(.success(output))
+//                }
+//            } catch {
+//                completion(.failure(error))
+//            }
+//        }
+//    }
+//
+//    open func serilizeDataTaskCompletion(data: Data?, urlResponse: URLResponse?, error: Error?) throws {
+//        if let error = error {
+//            throw error
+//        } else {
+//            guard let httpURLResponse = urlResponse as? HTTPURLResponse else {
+//                throw DPNError.emptyURLResponse
+//            }
+//
+//            switch httpURLResponse.statusCode {
+//            case 200...299:
+//                return
+//            default:
+//                throw DPNError.failtureURLResponseStatusCode(httpURLResponse.statusCode)
+//            }
+//        }
+//    }
+//
+//    open func decodeData<Response: Decodable>(_ data: Data?) throws -> Response {
+//        if let data = data {
+//            return try self.jsonDecoder.decode(Response.self, from: data)
+//        } else {
+//            throw DPNError.emptyData
+//        }
+//    }
+//
+//}
+
+/// 2. With serilizer
+//open class DPNService: NSObject {
+//
+//    // MARK: - Init
+//    public override init() {
+//        self.urlSession = URLSession.shared
+//        self.jsonDecoder = JSONDecoder()
+//    }
+//
+//    // MARK: - Props
+//    open var urlSession: URLSession
+//    open var jsonDecoder: JSONDecoder
+//
+//    // MARK: - Methods
+//    open func load<Decoder: DPNSerilizerFactory>(request: DPNURLRequestFactory, decoder: Decoder, completion: @escaping (DPNResult<Decoder.Output>) -> Void) {
+//        do {
+//            let urlRequest = try request.produce()
+//
+//            let task = self.urlSession.dataTask(with: urlRequest) { [weak self] data, urlResponse, error in
+//                guard let self = self else { return }
+//
+//                do {
+//                    try self.serilizeDataTaskCompletion(data: data, urlResponse: urlResponse, error: error)
+//                    let success = try decoder.decodeData(data)
+//                    completion(.success(success))
+//                } catch {
+//                    completion(.failure(error))
+//                }
+//            }
+//        } catch {
+//            completion(.failure(error))
+//        }
+//    }
+//
+//    open func serilizeDataTaskCompletion(data: Data?, urlResponse: URLResponse?, error: Error?) throws {
+//        if let error = error {
+//            throw error
+//        } else {
+//            guard let httpURLResponse = urlResponse as? HTTPURLResponse else {
+//                throw DPNError.emptyURLResponse
+//            }
+//
+//            switch httpURLResponse.statusCode {
+//            case 200...299:
+//                return
+//            default:
+//                throw DPNError.failtureURLResponseStatusCode(httpURLResponse.statusCode)
+//            }
+//        }
+//    }
+//
+//    open func decodeData<Response: Decodable>(_ data: Data?) throws -> Response {
+//        if let data = data {
+//            return try self.jsonDecoder.decode(Response.self, from: data)
+//        } else {
+//            throw DPNError.emptyData
+//        }
+//    }
+//
+//}
+//public enum DPNResultEmpty {
+//    case success
+//    case failure(Error)
+//}
+//typealias DPNDataTaskCompletion = (data: Data?, urlResponse: URLResponse?, error: Error?)
+//typealias DPNSerilizeResult = DPNResult<Data>
