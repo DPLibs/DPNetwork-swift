@@ -61,7 +61,7 @@ public protocol DPNMapperFactory {
 
 extension DPNMapperFactory {
     
-    func mappingArray() -> DPNArrayMapper<Self> {
+    func toArrayMapper() -> DPNArrayMapper<Self> {
         DPNArrayMapper<Self>(mapper: self)
     }
     
@@ -122,8 +122,12 @@ public struct DPNEmptyMapper: DPNMapperFactory {
 
 public struct DPNEmptyResponse: Decodable {}
 
-/// 3. Empty mapper
-open class DPNService: NSObject {
+public protocol DPNServiceInterface: AnyObject {
+    func loadData(request: DPNURLRequestFactory, completion: @escaping (DPNResult<Data?>) -> Void) -> URLSessionTask?
+    func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper, completion: @escaping (DPNResult<Mapper.Output>) -> Void) -> URLSessionTask? where Mapper.Input: Decodable
+}
+
+open class DPNService: NSObject, DPNServiceInterface {
 
     // MARK: - Init
     public init(urlSession: URLSession = .shared, jsonDecoder: JSONDecoder = JSONDecoder()) {
@@ -134,14 +138,15 @@ open class DPNService: NSObject {
     // MARK: - Props
     open var urlSession: URLSession
     open var jsonDecoder: JSONDecoder
-    open var task: URLSessionTask?
+    open private(set) var task: URLSessionTask?
 
     // MARK: - Methods
-    open func loadData(request: DPNURLRequestFactory, completion: @escaping (DPNResult<Data?>) -> Void) {
+    @discardableResult
+    open func loadData(request: DPNURLRequestFactory, completion: @escaping (DPNResult<Data?>) -> Void) -> URLSessionTask? {
         do {
             let urlRequest = try request.produce()
 
-            self.task = self.urlSession.dataTask(with: urlRequest) { [weak self] data, urlResponse, error in
+            let task = self.urlSession.dataTask(with: urlRequest) { [weak self] data, urlResponse, error in
                 guard let self = self else { return }
 
                 do {
@@ -151,13 +156,21 @@ open class DPNService: NSObject {
                     completion(.failure(error))
                 }
             }
+            self.task = task
             self.task?.resume()
+            return task
         } catch {
             completion(.failure(error))
+            return nil
         }
     }
 
-    open func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper = DPNEmptyMapper(), completion: @escaping (DPNResult<Mapper.Output>) -> Void) where Mapper.Input: Decodable {
+    @discardableResult
+    open func load<Mapper: DPNMapperFactory>(
+        request: DPNURLRequestFactory,
+        mapper: Mapper = DPNEmptyMapper(),
+        completion: @escaping (DPNResult<Mapper.Output>) -> Void
+    ) -> URLSessionTask? where Mapper.Input: Decodable {
         self.loadData(request: request) { [weak self] result in
             guard let self = self else { return }
 
@@ -202,6 +215,93 @@ open class DPNService: NSObject {
     }
 
 }
+
+open class DPNArrayTask<Mapper: DPNMapperFactory>: NSObject where Mapper.Input: Decodable {
+    
+    // MARK: - Init
+    public init(mapper: Mapper) {
+        self.mapper = mapper
+        self.isLoadAll = false
+    }
+    
+    // MARK: - Props
+    open var mapper: Mapper
+    open fileprivate(set) var isLoadAll: Bool
+    open fileprivate(set) weak var task: URLSessionTask?
+    
+    // MARK: - Methods
+    open func produce(request: DPNURLRequestFactory) throws -> URLRequest {
+        try request.produce()
+    }
+}
+
+extension DPNService {
+    
+//    func loadArray<Mapper: DPNMapperFactory>(_ task: DPNArrayTask<Mapper>) {
+//        do {
+//            let urlRequest = try task.produce(request: <#T##DPNURLRequestFactory#>)
+//        } catch {
+//            
+//        }
+//    }
+    
+}
+
+/// 1. Array service container
+//open class DPNArrayService: NSObject {
+//
+//    // MARK: - Init
+//    public init(service: DPNServiceInterface = DPNService()) {
+//        self.service = service
+//        self.isLoadAll = false
+//    }
+//
+//    // MARK: - Props
+//    open var service: DPNServiceInterface
+//    open private(set) var isLoadAll: Bool
+//    open private(set) var task: URLSessionTask?
+//
+//    public var isLoading: Bool {
+//        self.task?.state == .running
+//    }
+//
+//    // MARK: - Methods
+//    open func load<Mapper: DPNMapperFactory>(
+//        request: DPNURLRequestFactory,
+//        mapper: Mapper,
+//        isReload: Bool,
+//        limit: Int = 10,
+//        completion: @escaping (DPNResult<[Mapper.Output]>) -> Void
+//    ) where Mapper.Input: Decodable {
+//        if isReload {
+//            self.isLoadAll = false
+//            self.task?.cancel()
+//        }
+//
+//        guard !self.isLoading, !self.isLoadAll else { return }
+//
+//        self.task = self.service.load(request: request, mapper: mapper.toArrayMapper()) { [weak self] result in
+//            guard let self = self else { return }
+//
+//            switch result {
+//            case let .failure(error):
+//                completion(.failure(error))
+//            case let .success(array):
+//                self.isLoadAll = array.count < limit
+//                completion(.success(array))
+//            }
+//        }
+//    }
+//
+//}
+//
+//extension DPNService {
+//
+//    func toArrayService() -> DPNArrayService {
+//        DPNArrayService(service: self)
+//    }
+//
+//}
 
 
 //public protocol DPNDecoderFactory {

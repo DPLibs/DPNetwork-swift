@@ -11,6 +11,7 @@ import DPNetwork
 class ViewController: UIViewController {
     
 //    private lazy var postService = PostService()
+//    private lazy var postArrayService: PostsServiceInterface = PostsService()
     
     private let service: PostServiceInterface = PostService()
 
@@ -19,9 +20,18 @@ class ViewController: UIViewController {
         
         self.view.backgroundColor = .green
         
-        self.service.load { result in
-            
-        }
+//        self.postArrayService.load(request: PostRequest(), isReload: true, limit: 10) { result in
+//            switch result {
+//            case let .failure(error):
+//                print("!!! failure", error)
+//            case let .success(posts):
+//                print("!!! success", posts)
+//            }
+//        }
+        
+//        self.service.load { result in
+//
+//        }
         
 //        self.postService.load(PostRequest(), completion: { result in
 //            switch result {
@@ -80,7 +90,19 @@ protocol PostServiceInterface {
 final class PostService: DPNService, PostServiceInterface {
     
     func load(completion: @escaping (DPNResult<[Post]>) -> Void) {
-        self.load(request: PostRequest(), mapper: PostMapper().mappingArray(), completion: completion)
+        self.load(request: PostRequest(), mapper: PostMapper().toArrayMapper(), completion: completion)
     }
     
 }
+
+//protocol PostsServiceInterface {
+//    func load(request: DPNURLRequestFactory, isReload: Bool, limit: Int, completion: @escaping (DPNResult<[Post]>) -> Void)
+//}
+//
+//final class PostsService: DPNArrayService, PostsServiceInterface {
+//
+//    func load(request: DPNURLRequestFactory, isReload: Bool, limit: Int, completion: @escaping (DPNResult<[Post]>) -> Void) {
+//        self.load(request: request, mapper: PostMapper(), isReload: isReload, limit: limit, completion: completion)
+//    }
+//
+//}
