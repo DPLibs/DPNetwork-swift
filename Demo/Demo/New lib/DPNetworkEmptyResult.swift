@@ -164,6 +164,18 @@ open class DPNService: NSObject, DPNServiceInterface {
             return nil
         }
     }
+    
+    @available(iOS 13.0.0, *)
+    open func loadData(request: DPNURLRequestFactory) async throws -> Data? {
+        do {
+            let urlRequest = try request.produce()
+            let (data, urlResponse) = try await self.urlSession.data(for: urlRequest)
+            try self.serilizeDataTaskCompletion(data: data, urlResponse: urlResponse, error: nil)
+            return data
+        } catch {
+            throw error
+        }
+    }
 
     @discardableResult
     open func load<Mapper: DPNMapperFactory>(
@@ -186,6 +198,18 @@ open class DPNService: NSObject, DPNServiceInterface {
             } catch {
                 completion(.failure(error))
             }
+        }
+    }
+    
+    @available(iOS 13.0.0, *)
+    open func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper = DPNEmptyMapper()) async throws -> Mapper.Output where Mapper.Input: Decodable {
+        do {
+            let data = try await self.loadData(request: request)
+            let response: Mapper.Input = try self.decodeData(data)
+            let success: Mapper.Output = try mapper.map(response)
+            return success
+        } catch {
+            throw error
         }
     }
 

@@ -20,6 +20,20 @@ class ViewController: UIViewController {
         
         self.view.backgroundColor = .green
         
+        if #available(iOS 13.0.0, *) {
+            Task {
+                do {
+                    let posts = try await self.service.load()
+                } catch {
+                    
+                }
+                
+            }
+            
+        } else {
+            // Fallback on earlier versions
+        }
+        
 //        self.postArrayService.load(request: PostRequest(), isReload: true, limit: 10) { result in
 //            switch result {
 //            case let .failure(error):
@@ -85,12 +99,20 @@ struct PostMapper: DPNMapperFactory {
 
 protocol PostServiceInterface {
     func load(completion: @escaping (DPNResult<[Post]>) -> Void)
+    
+    @available(iOS 13.0.0, *)
+    func load() async throws -> [Post]
 }
 
 final class PostService: DPNService, PostServiceInterface {
     
     func load(completion: @escaping (DPNResult<[Post]>) -> Void) {
         self.load(request: PostRequest(), mapper: PostMapper().toArrayMapper(), completion: completion)
+    }
+    
+    @available(iOS 13.0.0, *)
+    func load() async throws -> [Post] {
+        try await self.load(request: PostRequest(), mapper: PostMapper().toArrayMapper())
     }
     
 }
