@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 // TODO: - 1. Implement paging
 // TODO: - 2. URLRequest constructor
@@ -13,6 +14,7 @@ import Foundation
 // TODO: - 4. Flags: isLoading, isLoadAll
 
 public typealias DPNResult<Success> = Result<Success, Error>
+public typealias DPNResultClosure<Success> = (DPNResult<Success>) -> Void
 
 public struct DPNError: LocalizedError, Equatable {
     
@@ -165,18 +167,6 @@ open class DPNService: NSObject, DPNServiceInterface {
         }
     }
     
-    @available(iOS 13.0.0, *)
-    open func loadData(request: DPNURLRequestFactory) async throws -> Data? {
-        do {
-            let urlRequest = try request.produce()
-            let (data, urlResponse) = try await self.urlSession.data(for: urlRequest)
-            try self.serilizeDataTaskCompletion(data: data, urlResponse: urlResponse, error: nil)
-            return data
-        } catch {
-            throw error
-        }
-    }
-
     @discardableResult
     open func load<Mapper: DPNMapperFactory>(
         request: DPNURLRequestFactory,
@@ -202,17 +192,35 @@ open class DPNService: NSObject, DPNServiceInterface {
     }
     
     @available(iOS 13.0.0, *)
-    open func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper = DPNEmptyMapper()) async throws -> Mapper.Output where Mapper.Input: Decodable {
+    open func loadData(request: DPNURLRequestFactory) async -> DPNResult<Data?> {
         do {
-            let data = try await self.loadData(request: request)
-            let response: Mapper.Input = try self.decodeData(data)
-            let success: Mapper.Output = try mapper.map(response)
-            return success
+            let urlRequest = try request.produce()
+            let (data, urlResponse) = try await self.urlSession.data(for: urlRequest)
+            try self.serilizeDataTaskCompletion(data: data, urlResponse: urlResponse, error: nil)
+            return .success(data)
         } catch {
-            throw error
+            return .failure(error)
         }
     }
-
+    
+    @available(iOS 13.0.0, *)
+    open func load<Mapper: DPNMapperFactory>(request: DPNURLRequestFactory, mapper: Mapper = DPNEmptyMapper()) async -> DPNResult<Mapper.Output> where Mapper.Input: Decodable {
+        let dataResult = await self.loadData(request: request)
+        
+        switch dataResult {
+        case let .failure(error):
+            return .failure(error)
+        case let .success(data):
+            do {
+                let response: Mapper.Input = try self.decodeData(data)
+                let success: Mapper.Output = try mapper.map(response)
+                return .success(success)
+            } catch {
+                return .failure(error)
+            }
+        }
+    }
+    
     open func serilizeDataTaskCompletion(data: Data?, urlResponse: URLResponse?, error: Error?) throws {
         if let error = error {
             throw error
@@ -231,45 +239,74 @@ open class DPNService: NSObject, DPNServiceInterface {
     }
 
     open func decodeData<Response: Decodable>(_ data: Data?) throws -> Response {
-        if let data = data {
-            return try self.jsonDecoder.decode(Response.self, from: data)
-        } else {
-            throw DPNError.emptyData
-        }
+        guard let data = data else { throw DPNError.emptyData }
+        return try self.jsonDecoder.decode(Response.self, from: data)
     }
 
 }
 
-open class DPNArrayTask<Mapper: DPNMapperFactory>: NSObject where Mapper.Input: Decodable {
-    
-    // MARK: - Init
-    public init(mapper: Mapper) {
-        self.mapper = mapper
-        self.isLoadAll = false
-    }
-    
-    // MARK: - Props
-    open var mapper: Mapper
-    open fileprivate(set) var isLoadAll: Bool
-    open fileprivate(set) weak var task: URLSessionTask?
-    
-    // MARK: - Methods
-    open func produce(request: DPNURLRequestFactory) throws -> URLRequest {
-        try request.produce()
-    }
-}
 
-extension DPNService {
-    
-//    func loadArray<Mapper: DPNMapperFactory>(_ task: DPNArrayTask<Mapper>) {
-//        do {
-//            let urlRequest = try task.produce(request: <#T##DPNURLRequestFactory#>)
-//        } catch {
-//            
-//        }
+/// 2. Array load by task
+//public protocol DPNTaskProtocol: AnyObject {
+//    var sessionTask: URLSessionTask? { get set }
+//    var isLoading: Bool { get }
+//    var isLoadAvalible: Bool { get }
+//
+//
+//}
+
+//open class DPNArrayTask<Mapper: DPNMapperFactory>: NSObject where Mapper.Input: Decodable {
+//
+//    // MARK: - Init
+//    public init(mapper: Mapper) {
+//        self.mapper = mapper
+//        self.isLoadAll = false
+//        self.isLoading = false
 //    }
-    
-}
+//
+//    // MARK: - Props
+//    open var mapper: Mapper
+//    open fileprivate(set) var isLoading: Bool
+//    open fileprivate(set) var isLoadAll: Bool
+//    open fileprivate(set) weak var task: URLSessionTask?
+//
+//    func loadAvailible() -> Bool {
+//        self.task?.state != .running
+//    }
+//
+//    func finishLoading(_ mapperOutput: Mapper.Output) {
+//
+//    }
+//
+//    // MARK: - Methods
+////    open func produce(request: DPNURLRequestFactory) throws -> URLRequest {
+////        try request.produce()
+////    }
+//}
+//
+//extension DPNService {
+//
+//    func loadTask<Mapper: DPNMapperFactory>(_ task: DPNArrayTask<Mapper>, request: DPNURLRequestFactory, completion: @escaping DPNResultClosure<Mapper.Output>) {
+//        guard task.loadAvailible() else { return }
+//
+//        task.task = self.load(request: request, mapper: task.mapper) { [weak task] result in
+//            switch result {
+//            case let .failure(error):
+//                completion(.failure(error))
+//            case let .success(output):
+//                task?.finishLoading(output)
+//                completion(.success(output))
+//            }
+//        }
+//
+////        do {
+////            let urlRequest = try task.produce(request: <#T##DPNURLRequestFactory#>)
+////        } catch {
+////
+////        }
+//    }
+//
+//}
 
 /// 1. Array service container
 //open class DPNArrayService: NSObject {
@@ -513,3 +550,52 @@ extension DPNService {
 //}
 //typealias DPNDataTaskCompletion = (data: Data?, urlResponse: URLResponse?, error: Error?)
 //typealias DPNSerilizeResult = DPNResult<Data>
+
+//    @available(iOS 13.0.0, *)
+//    open func loadData(request: DPNURLRequestFactory) -> Future<Data?, Error> {
+//        Future { [weak self] promise in
+//            guard let self = self else { return }
+//
+//            do {
+//                let urlRequest = try request.produce()
+//                self.urlSession
+//                    .dataTaskPublisher(for: urlRequest)
+//                    .sink(
+//                        receiveCompletion: { error in
+//                            switch error {
+//                            case .finished:
+//                                break
+//                            case let .failure(error):
+//                                promise(.failure(error))
+//                            }
+//                        },
+//                        receiveValue: { value in
+//                            promise(.success(value.data))
+//                        }
+//                    }
+//            } catch {
+//                promise(.failure(error))
+//            }
+//        }
+//    }
+    
+//    @available(iOS 13.0.0, *)
+//    open func loadData(request: DPNURLRequestFactory) -> AnyPublisher<Data?, Error> {
+//        do {
+//            let urlRequest = try request.produce()
+//
+//            return self.urlSession
+//                .dataTaskPublisher(for: urlRequest)
+//                .eraseToAnyPublisher()
+//
+//        } catch {
+//
+//        }
+//    }
+//
+//    @available(iOS 13.0.0, *)
+//    func ttt() {
+//        self.loadData(request: PostRequest())
+//
+//
+//    }

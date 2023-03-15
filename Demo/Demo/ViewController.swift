@@ -21,15 +21,17 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .green
         
         if #available(iOS 13.0.0, *) {
-            Task {
-                do {
-                    let posts = try await self.service.load()
-                } catch {
-                    
+            Task { @MainActor in
+                let postsResult = await self.service.load()
+                
+                switch postsResult {
+                case let .failure(error):
+                    break
+                case let .success(posts):
+                    print("!!!", posts)
                 }
                 
             }
-            
         } else {
             // Fallback on earlier versions
         }
@@ -101,7 +103,7 @@ protocol PostServiceInterface {
     func load(completion: @escaping (DPNResult<[Post]>) -> Void)
     
     @available(iOS 13.0.0, *)
-    func load() async throws -> [Post]
+    func load() async -> DPNResult<[Post]>
 }
 
 final class PostService: DPNService, PostServiceInterface {
@@ -111,8 +113,8 @@ final class PostService: DPNService, PostServiceInterface {
     }
     
     @available(iOS 13.0.0, *)
-    func load() async throws -> [Post] {
-        try await self.load(request: PostRequest(), mapper: PostMapper().toArrayMapper())
+    func load() async -> DPNResult<[Post]> {
+        await self.load(request: PostRequest(), mapper: PostMapper().toArrayMapper())
     }
     
 }
